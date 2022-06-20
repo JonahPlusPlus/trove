@@ -1,1 +1,4 @@
-broker = "127.0.0.1:9092"
+broker = ["127.0.0.1:9092"]
+address = ":443"
+certificate = "./localhost.crt"
+key = "./localhost.key"

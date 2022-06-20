@@ -3,11 +3,10 @@ package main
 import (
 	"io/ioutil"
 	"log"
-	"os"
 
 	"github.com/BurntSushi/toml"
-	trove "github.com/JonahPlusPlus/trove/pkg"
-	"github.com/Shopify/sarama"
+	trove "github.com/JonahPlusPlus/trove/internal"
+	"github.com/valyala/fasthttp"
 )
 
 var config trove.Config
@@ -24,8 +23,9 @@ func init() {
 }
 
 func main() {
-	sarama.Logger = log.New(os.Stdout, "[sarama] ", log.LstdFlags)
-
 	log.Printf("Kafka Broker: %s", config.Broker)
 
+	trove := trove.New(config)
+
+	log.Fatal(fasthttp.ListenAndServeTLS(trove.Address(), trove.CertificatePath(), trove.KeyPath(), trove.Run))
 }
