@@ -6,7 +6,6 @@ import (
 
 	"github.com/BurntSushi/toml"
 	trove "github.com/JonahPlusPlus/trove/internal"
-	"github.com/valyala/fasthttp"
 )
 
 var config trove.Config
@@ -27,5 +26,5 @@ func main() {
 
 	trove := trove.New(config)
 
-	log.Fatal(fasthttp.ListenAndServeTLS(trove.Address(), trove.CertificatePath(), trove.KeyPath(), trove.Run))
+	trove.Run()
 }

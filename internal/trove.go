@@ -1,63 +1,69 @@
 package trove
 
 import (
+	"io/ioutil"
+	"log"
+	"mime"
+	"regexp"
 	"strings"
 	"time"
 
-	"github.com/fasthttp/router"
+	"github.com/JonahPlusPlus/trove/templates"
 	"github.com/valyala/fasthttp"
 )
 
 type Trove struct {
 	config    Config
 	producers Producers
-	router    *router.Router
+	ext_match *regexp.Regexp
 }
 
 func New(config ...Config) Trove {
 	c := getConfig(config...)
-	router := router.New()
 
-	router.ServeFiles("/{filepath:*}", "./static/")
+	matcher, err := regexp.Compile(`\..*`)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	return Trove{
 		config:    c,
 		producers: newProducers(c.Broker),
-		router:    router,
+		ext_match: matcher,
 	}
 }
 
-func (t *Trove) Address() string {
-	return t.config.Address
-}
-
-func (t *Trove) CertificatePath() string {
-	return t.config.Certificate
-}
-
-func (t *Trove) KeyPath() string {
-	return t.config.Key
-}
-
-func (t *Trove) Run(ctx *fasthttp.RequestCtx) {
+func (t *Trove) handler(ctx *fasthttp.RequestCtx) {
 	started := time.Now()
 	path := string(ctx.Path())
 
-	if !strings.Contains(path, ".") {
-		var index_path string
-
-		// check for trailing slash
-		if path[len(path)-1] == '/' {
-			index_path = "index.html"
+	if strings.Contains(path, ".") {
+		// Handle static files
+		f, err := ioutil.ReadFile("./static" + path)
+		if err != nil {
+			log.Println(err)
 		} else {
-			index_path = "/index.html"
+			ctx.SetBody(f)
+			m := mime.TypeByExtension(t.ext_match.FindString(path))
+			ctx.SetContentType(m)
 		}
-
-		ctx.URI().SetPath(path + index_path)
+	} else {
+		// Handle web pages
+		ctx.SetContentType("text/html")
+		switch path {
+		case "/":
+			ctx.SetBody([]byte(templates.PrintPage(&templates.Root{})))
+		case "/dashboard":
+			ctx.SetBody([]byte(templates.PrintPage(&templates.Dashboard{})))
+		default:
+			ctx.SetBody([]byte(templates.PrintPage(&templates.Unfound{})))
+		}
 	}
 
-	t.router.Handler(ctx)
-
 	t.producers.logRequest(ctx, float64(time.Since(started))/float64(time.Second))
+}
 
+func (t *Trove) Run() {
+	log.Fatal(fasthttp.ListenAndServeTLS(t.config.Address, t.config.Certificate, t.config.Key, t.handler))
 }

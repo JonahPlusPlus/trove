@@ -1,0 +1,12 @@
+/? 404 error page
+{% code
+type Unfound struct {}
+%}
+
+{% func (bp *Unfound) Head() %}
+	{%= head("trove - 404") %}
+{% endfunc %}
+
+{% func (bp *Unfound) Body() %}
+	<h1>404</h1>
+{% endfunc %}

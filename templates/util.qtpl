@@ -1,0 +1,25 @@
+Template Utilities
+{%
+interface Page {
+    Head()
+    Body()
+}
+%}
+
+{% func PrintPage(p Page) %}
+<!DOCTYPE html>
+<html>
+    <head>
+        {%= p.Head() %}
+    </head>
+    <body>
+        {%= p.Body() %}
+    </body>
+</html>
+{% endfunc %}
+
+
+{% func head(title string) %}
+	<link rel="icon" href="favicon.png" type="image/png">
+    <title>{%s title %}</title>
+{% endfunc %}

@@ -7,7 +7,7 @@
 * Docker
 
 ## Building
-* Run `make certificate` to generate certificate
+* Run `make install` to install quicktemplate (assuming your "go/bin" is already in PATH, if not, do that) and generate localhost certificate
 * Install `localhost.crt` to your list of locally trusted roots
 * Boot up Kafka image with `make boot`
 * Run `make` to run server

@@ -16,11 +16,16 @@ clean:
 	go clean
 	rm ${SERVER_OUT}
 
+install: install_quicktemplate certificate
+
 certificate:
 	./generate_certificate.sh
 
+install_quicktemplate:
+	go install github.com/valyala/quicktemplate/qtc
+
 generate:
-	go generate
+	qtc -dir=templates
 
 boot:
 	docker compose up

@@ -2,3 +2,4 @@
 localhost.crt
 localhost.key
 static/dashboard/index.wasm
+*.qtpl.go

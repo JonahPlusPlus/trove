@@ -1,0 +1,14 @@
+/dashboard Dashboard page
+{% code
+type Dashboard struct {}
+%}
+
+{% func (bp *Dashboard) Head() %}
+	{%= head("trove - Dashboard") %}
+    <script src="wasm_exec.js"></script>
+    <script src="dashboard/index.js"></script>
+{% endfunc %}
+
+{% func (bp *Dashboard) Body() %}
+	<h1>Dashboard</h1>
+{% endfunc %}

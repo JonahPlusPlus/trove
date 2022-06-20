@@ -1,0 +1,12 @@
+/ Root page
+{% code
+type Root struct {}
+%}
+
+{% func (bp *Root) Head() %}
+	{%= head("trove") %}
+{% endfunc %}
+
+{% func (bp *Root) Body() %}
+	<h1>Root</h1>
+{% endfunc %}
