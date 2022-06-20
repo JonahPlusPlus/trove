@@ -1,4 +1,5 @@
 /out
+/static/css
 localhost.crt
 localhost.key
 static/dashboard/index.wasm
