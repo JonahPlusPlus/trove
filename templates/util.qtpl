@@ -21,5 +21,6 @@ interface Page {
 
 {% func head(title string) %}
 	<link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="css/index.css" type="text/css">
     <title>{%s title %}</title>
 {% endfunc %}

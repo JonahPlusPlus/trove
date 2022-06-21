@@ -10,7 +10,7 @@ type RequestEvent struct {
 	Path   string  `json:"path"`
 	Remote string  `json:"remote"`
 	Time   float64 `json:"time"`
-	Error  error   `json:"error,omitempty"`
+	Error  *string `json:"error,omitempty"`
 
 	encoded []byte
 	err     error

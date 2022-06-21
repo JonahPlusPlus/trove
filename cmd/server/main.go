@@ -3,6 +3,8 @@ package main
 import (
 	"io/ioutil"
 	"log"
+	"os"
+	"os/signal"
 
 	"github.com/BurntSushi/toml"
 	trove "github.com/JonahPlusPlus/trove/internal"
@@ -22,9 +24,18 @@ func init() {
 }
 
 func main() {
-	log.Printf("Kafka Broker: %s", config.Broker)
+	log.Printf("Kafka Broker: %s", config.Brokers)
 
 	trove := trove.New(config)
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		<-c
+		log.Println("Received an interrupt, exiting...")
+		trove.Exit()
+		os.Exit(0)
+	}()
 
 	trove.Run()
 }
