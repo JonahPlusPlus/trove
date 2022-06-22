@@ -12,6 +12,8 @@ type Config struct {
 	Key string
 	// Consumer Group ID
 	GroupID string
+	// MongoDB URI
+	MongoURI string
 }
 
 func getConfig(config ...Config) Config {
@@ -19,7 +21,12 @@ func getConfig(config ...Config) Config {
 		return config[0]
 	} else {
 		return Config{
-			Brokers: []string{"127.0.0.1:9092"},
+			Brokers:     []string{"127.0.0.1:9092"},
+			Address:     ":443",
+			Certificate: "",
+			Key:         "",
+			GroupID:     "unassigned-group",
+			MongoURI:    "",
 		}
 	}
 }

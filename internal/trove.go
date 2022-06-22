@@ -1,6 +1,7 @@
 package trove
 
 import (
+	"context"
 	"errors"
 	"io/ioutil"
 	"log"
@@ -12,6 +13,8 @@ import (
 
 	"github.com/JonahPlusPlus/trove/templates"
 	"github.com/valyala/fasthttp"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Trove struct {
@@ -19,6 +22,7 @@ type Trove struct {
 	server    fasthttp.Server
 	producers Producers
 	consumers Consumers
+	database  *mongo.Client
 	ext_match *regexp.Regexp
 }
 
@@ -46,6 +50,12 @@ func New(config ...Config) Trove {
 		MaxConnsPerIP:        500,
 		MaxRequestsPerConn:   500,
 		MaxKeepaliveDuration: 5 * time.Second,
+	}
+
+	t.database, err = mongo.Connect(context.Background(), options.Client().ApplyURI(c.MongoURI))
+
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	return t

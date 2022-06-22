@@ -13,7 +13,12 @@ import (
 var config trove.Config
 
 func init() {
-	content, err := ioutil.ReadFile("trove.toml")
+	content, err := ioutil.ReadFile(".config")
+	path := string(content)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	content, err = ioutil.ReadFile(path)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
