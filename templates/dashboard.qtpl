@@ -1,16 +1,16 @@
 /dashboard Dashboard page
 {% code
-type Dashboard struct {}
+type DashboardPage struct {}
 %}
 
-{% func (bp *Dashboard) Head() %}
+{% func (bp *DashboardPage) Head() %}
 	{%= head("trove - Dashboard") %}
     <script src="wasm_exec.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.min.js" integrity="sha256-cHVO4dqZfamRhWD7s4iXyaXWVK10odD+qp4xidFzqTI=" crossorigin="anonymous"></script>
     <script src="dashboard/index.js"></script>
 {% endfunc %}
 
-{% func (bp *Dashboard) Body() %}
+{% func (bp *DashboardPage) Body() %}
 	<h1>Dashboard</h1>
     <p id="num_requests">Number of Requests: </p>
     <p id="avg_time">Average Request Time: </p>

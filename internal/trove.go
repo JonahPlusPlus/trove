@@ -84,13 +84,15 @@ func (t *Trove) handler(ctx *fasthttp.RequestCtx) {
 		ctx.SetContentType("text/html")
 		switch path {
 		case "/":
-			ctx.SetBody([]byte(templates.PrintPage(&templates.Root{})))
+			ctx.SetBody([]byte(templates.PrintPage(&templates.RootPage{})))
+		case "/inventory":
+			ctx.SetBody([]byte(templates.PrintPage(&templates.InventoryPage{})))
 		case "/dashboard":
-			ctx.SetBody([]byte(templates.PrintPage(&templates.Dashboard{})))
+			ctx.SetBody([]byte(templates.PrintPage(&templates.DashboardPage{})))
 		case "/ws":
 			t.consumers.analytics.ws_handler(ctx)
 		default:
-			ctx.SetBody([]byte(templates.PrintPage(&templates.Unfound{})))
+			ctx.SetBody([]byte(templates.PrintPage(&templates.UnfoundPage{})))
 			err = errors.New("404")
 		}
 	}

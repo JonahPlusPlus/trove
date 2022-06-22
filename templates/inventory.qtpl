@@ -1,0 +1,14 @@
+/ Root page
+{% code
+type InventoryPage struct {}
+%}
+
+{% func (bp *InventoryPage) Head() %}
+	{%= head("trove - Inventory") %}
+{% endfunc %}
+
+{% func (bp *InventoryPage) Body() %}
+	<h1>Inventory</h1>
+
+	<a href="/dashboard">Dashboard</a>
+{% endfunc %}

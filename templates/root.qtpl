@@ -1,13 +1,13 @@
 / Root page
 {% code
-type Root struct {}
+type RootPage struct {}
 %}
 
-{% func (bp *Root) Head() %}
+{% func (bp *RootPage) Head() %}
 	{%= head("trove") %}
 {% endfunc %}
 
-{% func (bp *Root) Body() %}
+{% func (bp *RootPage) Body() %}
 	<h1>Root</h1>
 
 	<a href="/dashboard">Dashboard</a>
