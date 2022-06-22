@@ -67,6 +67,9 @@ window.onload = function() {
 
         rp_chart.update();
 
+        document.getElementById("num_requests").innerText = "Number of Requests: " + window.trove_analytics.num_requests;
+        document.getElementById("avg_time").innerText = "Average Request Time: " + Math.trunc(window.trove_analytics.request_time * 1000) + " ms";
+
         console.log("Updated Dashboard");
     }
 

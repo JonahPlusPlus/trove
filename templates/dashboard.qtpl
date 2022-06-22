@@ -12,6 +12,8 @@ type Dashboard struct {}
 
 {% func (bp *Dashboard) Body() %}
 	<h1>Dashboard</h1>
+    <p id="num_requests">Number of Requests: </p>
+    <p id="avg_time">Average Request Time: </p>
     <div style="width:400px;display:inline-block;">
         <canvas id="rm_chart"></canvas>
     </div>
