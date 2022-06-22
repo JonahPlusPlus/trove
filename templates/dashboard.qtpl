@@ -12,4 +12,13 @@ type Dashboard struct {}
 
 {% func (bp *Dashboard) Body() %}
 	<h1>Dashboard</h1>
+    <div style="width:400px;display:inline-block;">
+        <canvas id="rm_chart"></canvas>
+    </div>
+    <div style="width:400px;display:inline-block;">
+        <canvas id="rh_chart"></canvas>
+    </div>
+    <div style="width:400px;display:inline-block;">
+        <canvas id="rp_chart"></canvas>
+    </div>
 {% endfunc %}
