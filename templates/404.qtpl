@@ -9,4 +9,7 @@ type UnfoundPage struct {}
 
 {% func (bp *UnfoundPage) Body() %}
 	<h1>404</h1>
+	<a href="/">Root</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/inventory">Inventory</a>
 {% endfunc %}

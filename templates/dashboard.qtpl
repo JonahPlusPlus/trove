@@ -12,6 +12,9 @@ type DashboardPage struct {}
 
 {% func (bp *DashboardPage) Body() %}
 	<h1>Dashboard</h1>
+    <a href="/">Root</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/inventory">Inventory</a>
     <p id="num_requests">Number of Requests: </p>
     <p id="avg_time">Average Request Time: </p>
     <div style="width:400px;display:inline-block;">

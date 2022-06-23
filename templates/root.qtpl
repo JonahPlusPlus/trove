@@ -10,7 +10,9 @@ type RootPage struct {}
 {% func (bp *RootPage) Body() %}
 	<h1>Root</h1>
 
-	<a href="/dashboard">Dashboard</a>
+	<a href="/">Root</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/inventory">Inventory</a>
 
 	<p>
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ullamcorper velit sed ullamcorper morbi tincidunt. Non quam lacus suspendisse faucibus interdum posuere lorem ipsum. Vitae semper quis lectus nulla at volutpat diam. Cras pulvinar mattis nunc sed blandit libero. Egestas sed tempus urna et pharetra pharetra. Nunc mattis enim ut tellus. Ac odio tempor orci dapibus ultrices in iaculis. Ante metus dictum at tempor. Pellentesque sit amet porttitor eget.
