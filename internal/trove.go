@@ -13,17 +13,19 @@ import (
 
 	"github.com/JonahPlusPlus/trove/templates"
 	"github.com/valyala/fasthttp"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 type Trove struct {
-	config    Config
-	server    fasthttp.Server
-	producers Producers
-	consumers Consumers
-	database  *mongo.Client
-	ext_match *regexp.Regexp
+	config       Config
+	server       fasthttp.Server
+	producers    Producers
+	consumers    Consumers
+	mongo_client *mongo.Client
+	ext_match    *regexp.Regexp
 }
 
 func New(config ...Config) Trove {
@@ -36,10 +38,11 @@ func New(config ...Config) Trove {
 	}
 
 	t := Trove{
-		config:    c,
-		producers: newProducers(c.Brokers),
-		consumers: newConsumers(c.Brokers, c.GroupID),
-		ext_match: matcher,
+		config:       c,
+		producers:    newProducers(c.Brokers),
+		consumers:    newConsumers(c.Brokers, c.GroupID),
+		mongo_client: nil,
+		ext_match:    matcher,
 	}
 
 	t.server = fasthttp.Server{
@@ -52,9 +55,21 @@ func New(config ...Config) Trove {
 		MaxKeepaliveDuration: 5 * time.Second,
 	}
 
-	t.database, err = mongo.Connect(context.Background(), options.Client().ApplyURI(c.MongoURI))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Connecting to MongoDB at", t.config.MongoURI)
+	opts := options.Client()
+	opts = opts.ApplyURI(t.config.MongoURI)
+
+	t.mongo_client, err = mongo.Connect(context.Background(), opts)
 
 	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err = t.mongo_client.Ping(context.Background(), readpref.Primary()); err != nil {
 		log.Fatal(err)
 	}
 
@@ -86,7 +101,26 @@ func (t *Trove) handler(ctx *fasthttp.RequestCtx) {
 		case "/":
 			ctx.SetBody([]byte(templates.PrintPage(&templates.RootPage{})))
 		case "/inventory":
-			ctx.SetBody([]byte(templates.PrintPage(&templates.InventoryPage{})))
+			col := t.mongo_client.Database("trove").Collection("items")
+			log.Println(col.Name())
+
+			projection := bson.D{{"name", 1}, {"quantity", 1}, {"_id", 0}}
+			opts := options.Find().SetProjection(projection)
+
+			cur, err := col.Find(context.Background(), bson.D{}, opts)
+
+			if err != nil {
+				log.Println(err)
+				break
+			}
+
+			var results []bson.D
+			if err = cur.All(context.Background(), &results); err != nil {
+				log.Println(err)
+				break
+			}
+
+			ctx.SetBody([]byte(templates.PrintPage(&templates.InventoryPage{Items: results})))
 		case "/dashboard":
 			ctx.SetBody([]byte(templates.PrintPage(&templates.DashboardPage{})))
 		case "/ws":
@@ -103,20 +137,14 @@ func (t *Trove) handler(ctx *fasthttp.RequestCtx) {
 func (t *Trove) Run() {
 	t.consumers.exitCallback = t.consumers.consume()
 
-	var (
-		ln  net.Listener
-		err error
-	)
-	ln, err = net.Listen("tcp", t.config.Address)
+	ln, err := net.Listen("tcp", t.config.Address)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	log.Println("Serving TLS connections on " + t.config.Address)
-	err = t.server.ServeTLS(ln, t.config.Certificate, t.config.Key)
-
-	if err != nil {
+	if err = t.server.ServeTLS(ln, t.config.Certificate, t.config.Key); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -126,4 +154,7 @@ func (t *Trove) Exit() {
 		t.consumers.exitCallback()
 	}
 	t.server.Shutdown()
+	if t.mongo_client != nil {
+		t.mongo_client.Disconnect(context.Background())
+	}
 }

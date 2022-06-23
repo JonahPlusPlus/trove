@@ -1,6 +1,13 @@
 / Root page
+{% import (
+    "fmt"
+    
+    "go.mongodb.org/mongo-driver/bson"
+) %}
 {% code
-type InventoryPage struct {}
+type InventoryPage struct {
+    Items []bson.D
+}
 %}
 
 {% func (bp *InventoryPage) Head() %}
@@ -9,6 +16,12 @@ type InventoryPage struct {}
 
 {% func (bp *InventoryPage) Body() %}
 	<h1>Inventory</h1>
+    <a href="/dashboard">Dashboard</a>
+    <p>
+    {% for _, bsonItem := range bp.Items %}
+        {%q fmt.Sprint(bsonItem) %}
+    {% endfor %}
+    </p>
 
-	<a href="/dashboard">Dashboard</a>
+	
 {% endfunc %}
